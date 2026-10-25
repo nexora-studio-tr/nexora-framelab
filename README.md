@@ -6,6 +6,8 @@ A local Windows application that discovers your hardware, analyzes CS2 frame tim
 
 [![CI](https://github.com/nexora-studio-tr/nexora-framelab/actions/workflows/ci.yml/badge.svg)](https://github.com/nexora-studio-tr/nexora-framelab/actions/workflows/ci.yml) · [Türkçe](README.tr.md) · [Setup](docs/SETUP.md) · [Architecture](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md)
 
+**[Download 0.1.0-alpha.1 for Windows](https://github.com/nexora-studio-tr/nexora-framelab/releases/tag/v0.1.0-alpha.1)** — installer, portable ZIP, source, checksums and executed validation.
+
 **Experimental alpha. Live CS2 testing was explicitly omitted at the operator's request. No real FPS increase or VAC/FACEIT compatibility is claimed.** The write adapter currently recognizes only `video.cfg` **Version 16** with supported fields; other versions remain read-only. Imported captures and examples cannot apply settings.
 
 ## What it does
