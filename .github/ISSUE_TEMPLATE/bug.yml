@@ -1,0 +1,19 @@
+name: Bug report / Hata bildirimi
+description: A reproducible, sanitized problem report.
+body:
+  - type: markdown
+    attributes:
+      value: "Never attach runtime databases, private paths, replay files or player data. Synthetic examples are preferred. Security reports: see SECURITY.md."
+  - type: textarea
+    id: environment
+    attributes:
+      label: Version and environment / Sürüm ve ortam
+      description: Windows, FrameLab, CS2 config version, GPU/driver; identify whether this is native, imported or synthetic.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction and result / Tekrarlama ve sonuç
+    validations:
+      required: true

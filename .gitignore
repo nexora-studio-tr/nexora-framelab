@@ -1,0 +1,12 @@
+node_modules/
+dist/
+target/
+artifacts/
+.framelab/
+tools/presentmon/*.exe
+*.etl
+*.dem
+*.db*
+.env*
+*.log
+.DS_Store

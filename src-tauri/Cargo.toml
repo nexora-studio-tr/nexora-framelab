@@ -1,0 +1,25 @@
+[package]
+name = "nexora-framelab"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+default-run = "nexora-framelab"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+framelab-core = { path = "../crates/framelab-core" }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde_json = "=1.0.145"
+serde = { version = "=1.0.228", features = ["derive"] }
+
+[[bin]]
+name = "nexora-framelab"
+path = "src/main.rs"
+
+[[bin]]
+name = "framelab-cli"
+path = "src/cli.rs"

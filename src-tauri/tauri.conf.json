@@ -1,0 +1,9 @@
+{
+  "$schema":"https://schema.tauri.app/config/2",
+  "productName":"Nexora FrameLab",
+  "version":"0.1.0-alpha.1",
+  "identifier":"studio.nexora.framelab",
+  "build":{"beforeDevCommand":"npm run dev","devUrl":"http://127.0.0.1:4367","beforeBuildCommand":"npm run build","frontendDist":"../dist"},
+  "app":{"windows":[{"label":"main","title":"Nexora FrameLab","width":1360,"height":900,"minWidth":900,"minHeight":680}],"security":{"csp":"default-src 'self'; connect-src ipc: http://ipc.localhost; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'","capabilities":["main"]}},
+  "bundle":{"active":true,"targets":["nsis"],"category":"Utility","shortDescription":"Measure, test and recover CS2 settings","icon":["icons/32x32.png","icons/128x128.png","icons/128x128@2x.png","icons/icon.ico"],"resources":{"../tools/presentmon/PresentMon.exe":"presentmon/PresentMon.exe","../tools/presentmon/LICENSE.txt":"presentmon/LICENSE.txt"},"windows":{"webviewInstallMode":{"type":"skip"},"nsis":{"installMode":"currentUser","languages":["English","Turkish"],"displayLanguageSelector":true}}}
+}

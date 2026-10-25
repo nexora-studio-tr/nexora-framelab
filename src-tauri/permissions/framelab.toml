@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "framelab-commands"
+description = "Fixed local analysis and recoverable CS2 experiment commands"
+commands.allow = ["snapshot", "refresh_system", "choose_replay", "import_capture", "start_experiment", "cancel_experiment", "restore_profile", "export_report", "load_example"]

@@ -1,0 +1,8 @@
+"video.cfg"
+{
+"Version" "16"
+"setting.msaa_samples" "8"
+"setting.videocfg_particle_detail" "2"
+"setting.defaultres" "1920"
+"setting.defaultresheight" "1080"
+}

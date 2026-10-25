@@ -1,0 +1,1 @@
+Describe the problem, final behavior and checks actually run. Label synthetic/imported/live evidence. Explain write/recovery, compatibility or metric changes. Never attach player data, private paths, runtime databases or credentials. Türkçe yazabilirsin.

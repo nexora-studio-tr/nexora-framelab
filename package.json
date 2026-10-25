@@ -1,0 +1,48 @@
+{
+  "name": "nexora-framelab",
+  "version": "0.1.0-alpha.1",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Evidence-driven CS2 tuning with hardware discovery and recoverable experiments",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nexora-studio-tr/nexora-framelab.git"
+  },
+  "engines": {
+    "node": ">=24.17.0 <25"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 4367 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "check": "npm run build && npm test",
+    "format": "prettier --write src tests scripts *.json *.ts",
+    "format:check": "prettier --check src tests scripts *.json *.ts",
+    "test:browser": "node scripts/validate-browser.mjs",
+    "prepare:tools": "node scripts/prepare-tools.mjs",
+    "tauri": "tauri",
+    "desktop": "tauri dev",
+    "desktop:build": "npm run prepare:tools && tauri build",
+    "package:source": "python scripts/package-source.py"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "lucide-react": "1.61.0",
+    "radix-ui": "1.8.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@tauri-apps/cli": "2.12.4",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}
