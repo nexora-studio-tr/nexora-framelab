@@ -9,10 +9,14 @@ fn main() {
             )
         }
         Some("analyze") => match args.get(2) {
-            Some(path) => std::fs::read(path)
-                .map_err(|_| "CAPTURE_FILE_MISSING".into())
-                .and_then(|raw| metrics::parse_csv(&raw, None))
-                .and_then(|m| serde_json::to_value(m).map_err(|_| "REPORT_INVALID".into())),
+            Some(path) => framelab_core::config::read_limited(
+                std::path::Path::new(path),
+                64 * 1024 * 1024,
+                "CAPTURE_FILE_MISSING",
+                "CAPTURE_TOO_LARGE",
+            )
+            .and_then(|raw| metrics::parse_csv(&raw, None))
+            .and_then(|m| serde_json::to_value(m).map_err(|_| "REPORT_INVALID".into())),
             None => Err("CSV_PATH_REQUIRED".into()),
         },
         Some("example") => serde_json::to_value(metrics::example(Hardware::default()))

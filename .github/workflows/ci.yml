@@ -59,6 +59,7 @@ jobs:
       - run: rustup toolchain install 1.99.1 --profile minimal --component rustfmt
       - run: npm ci --ignore-scripts
       - run: npm run prepare:tools
+      - run: npm run prepare:notices
       - run: npm run tauri -- build --ci
       - run: cargo build -p nexora-framelab --bin framelab-cli --release --locked
       - shell: pwsh

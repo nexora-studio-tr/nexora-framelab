@@ -156,7 +156,12 @@ impl Engine {
         {
             return Err("CSV_INVALID".into());
         }
-        let raw = std::fs::read(path).map_err(|_| "CAPTURE_FILE_MISSING")?;
+        let raw = config::read_limited(
+            &path,
+            64 * 1024 * 1024,
+            "CAPTURE_FILE_MISSING",
+            "CAPTURE_TOO_LARGE",
+        )?;
         let baseline = metrics::parse_csv(&raw, None)?;
         let hardware = self
             .state
@@ -284,6 +289,7 @@ impl Engine {
                 experiment.execute(job_id.clone())
             }))
             .unwrap_or_else(|_| Err("EXPERIMENT_PANICKED".into()));
+            let report_saved = outcome.is_ok();
             let cleanup = match platform::game_pids() {
                 Ok(pids) if pids.is_empty() => engine.store.recover().map(|_| ()),
                 _ => Err("CLOSE_CS2_FOR_RECOVERY".into()),
@@ -294,7 +300,7 @@ impl Engine {
                 (Err(code), _) => ("failed", code),
                 (Ok(_), Err(code)) => ("failed", code),
             };
-            if phase == "failed" || phase == "canceled" {
+            if !report_saved && (phase == "failed" || phase == "canceled") {
                 let _ = engine.store.save_report(&Report {
                     id: job_id,
                     created_at: now_ms(),
@@ -312,13 +318,16 @@ impl Engine {
                     notes: vec![message.clone()],
                 });
             }
+            let discovery = config::discover(&platform::steam_roots());
+            let game_running = platform::game_pids().map(|p| !p.is_empty()).unwrap_or(true);
             if let Ok(mut state) = engine.state.lock() {
                 if let Some(job) = state.job.as_mut() {
                     job.phase = phase.into();
                     job.message = message;
                     job.canceling = false;
                 }
-                state.discovery = config::discover(&platform::steam_roots());
+                state.discovery = discovery;
+                state.game_running = game_running;
             }
         });
         Ok(id)

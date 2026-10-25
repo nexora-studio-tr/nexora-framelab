@@ -9,6 +9,7 @@ files={}
 paths=[ROOT/name for name in ROOT_FILES]
 for folder in DIRS:
     for path in (ROOT/folder).rglob('*'):
+        if path.is_relative_to(ROOT/'tools/notices'):continue
         if any(p in ('target','node_modules','artifacts','.git','__pycache__') for p in path.relative_to(ROOT).parts):continue
         if path.suffix=='.exe':continue
         if path.is_file():paths.append(path)

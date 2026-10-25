@@ -20,6 +20,10 @@ The experiment launcher is intentionally strict: an existing CS2 session blocks 
 
 ## Use the desktop application
 
+![FrameLab interface with explicitly synthetic example results](docs/assets/interface-synthetic-en.png)
+
+*Interface preview; the figures are synthetic and do not show a real CS2 benchmark.*
+
 Download the Windows installer or portable ZIP from [Releases](https://github.com/nexora-studio-tr/nexora-framelab/releases), verify `SHA256SUMS.txt`, then launch FrameLab. Windows 11 x64 and the existing Microsoft Edge WebView2 runtime are required. No account, Python, Rust or paid API is needed by end users.
 
 1. Scan your system; select the CS2 profile if multiple profiles exist.

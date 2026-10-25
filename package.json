@@ -21,9 +21,10 @@
     "format:check": "prettier --check src tests scripts *.json *.ts",
     "test:browser": "node scripts/validate-browser.mjs",
     "prepare:tools": "node scripts/prepare-tools.mjs",
+    "prepare:notices": "node scripts/collect-notices.mjs",
     "tauri": "tauri",
-    "desktop": "tauri dev",
-    "desktop:build": "npm run prepare:tools && tauri build",
+    "desktop": "npm run prepare:tools && npm run prepare:notices && tauri dev",
+    "desktop:build": "npm run prepare:tools && npm run prepare:notices && tauri build",
     "package:source": "python scripts/package-source.py"
   },
   "dependencies": {

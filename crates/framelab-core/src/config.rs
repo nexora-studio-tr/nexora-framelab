@@ -1,9 +1,32 @@
 use crate::{kv, model::*};
-use std::path::{Path, PathBuf};
+use std::{
+    io::Read,
+    path::{Path, PathBuf},
+};
+
+pub fn read_limited(path: &Path, limit: u64, missing: &str, oversized: &str) -> Result<Vec<u8>> {
+    let file = std::fs::File::open(path).map_err(|_| missing.to_string())?;
+    let metadata = file.metadata().map_err(|_| missing.to_string())?;
+    if !metadata.is_file() || metadata.len() > limit {
+        return Err(oversized.into());
+    }
+    let mut bytes = Vec::new();
+    file.take(limit.saturating_add(1))
+        .read_to_end(&mut bytes)
+        .map_err(|_| missing.to_string())?;
+    if bytes.len() as u64 > limit {
+        return Err(oversized.into());
+    }
+    Ok(bytes)
+}
 
 pub const SUPPORTED_VERSION: &str = "16";
 pub fn safe_file(path: &Path) -> Result<PathBuf> {
-    if !path.is_absolute() || path.to_string_lossy().starts_with("\\\\") {
+    #[cfg(windows)]
+    let local = matches!(path.components().next(), Some(std::path::Component::Prefix(p)) if matches!(p.kind(), std::path::Prefix::Disk(_) | std::path::Prefix::VerbatimDisk(_)));
+    #[cfg(not(windows))]
+    let local = !path.to_string_lossy().starts_with("\\\\");
+    if !path.is_absolute() || !local {
         return Err("LOCAL_PATH_REQUIRED".into());
     }
     for ancestor in path.ancestors() {
@@ -33,8 +56,13 @@ pub fn read_video(path: &Path) -> Result<String> {
     if !meta.is_file() || meta.len() > 1024 * 1024 {
         return Err("CONFIG_TOO_LARGE".into());
     }
-    String::from_utf8(std::fs::read(path).map_err(|_| "FILE_UNAVAILABLE")?)
-        .map_err(|_| "CONFIG_INVALID_UTF8".into())
+    String::from_utf8(read_limited(
+        &path,
+        1024 * 1024,
+        "FILE_UNAVAILABLE",
+        "CONFIG_TOO_LARGE",
+    )?)
+    .map_err(|_| "CONFIG_INVALID_UTF8".into())
 }
 pub fn inspect(path: &Path, label: &str) -> Result<Profile> {
     let content = read_video(path)?;
@@ -164,7 +192,7 @@ pub fn discover(steam_roots: &[PathBuf]) -> Discovery {
         }
         result.steam_dir.get_or_insert(steam.clone());
         libraries.push(steam.clone());
-        if let Ok(content) = std::fs::read_to_string(steam.join("steamapps/libraryfolders.vdf")) {
+        if let Ok(content) = read_video(&steam.join("steamapps/libraryfolders.vdf")) {
             if let Ok(root) = kv::parse(&content) {
                 if let Some(folder) = kv::children(&root, "libraryfolders") {
                     for entry in folder {
@@ -182,7 +210,7 @@ pub fn discover(steam_roots: &[PathBuf]) -> Discovery {
     libraries.dedup();
     for library in libraries {
         let manifest = library.join("steamapps/appmanifest_730.acf");
-        let Ok(raw) = std::fs::read_to_string(&manifest) else {
+        let Ok(raw) = read_video(&manifest) else {
             continue;
         };
         let Ok(root) = kv::parse(&raw) else {

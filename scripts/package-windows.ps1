@@ -7,6 +7,7 @@ Copy-Item -LiteralPath (Join-Path $rootPath 'target\release\nexora-framelab.exe'
 Copy-Item -LiteralPath (Join-Path $rootPath 'target\release\framelab-cli.exe') -Destination $portablePath
 Copy-Item -LiteralPath (Join-Path $rootPath 'tools\presentmon\PresentMon.exe') -Destination (Join-Path $portablePath 'presentmon')
 Copy-Item -LiteralPath (Join-Path $rootPath 'tools\presentmon\LICENSE.txt') -Destination (Join-Path $portablePath 'presentmon')
+Copy-Item -LiteralPath (Join-Path $rootPath 'tools\notices\THIRD-PARTY-LICENSES.txt') -Destination $portablePath
 foreach ($name in @('LICENSE','THIRD_PARTY_NOTICES.md','README.md','README.tr.md')) {Copy-Item -LiteralPath (Join-Path $rootPath $name) -Destination $portablePath}
 Compress-Archive -LiteralPath $portablePath -DestinationPath (Join-Path $outPath 'nexora-framelab-0.1.0-alpha.1-windows-x64-portable.zip') -Force
 $installer=Get-ChildItem -LiteralPath (Join-Path $rootPath 'target\release\bundle\nsis') -Filter '*-setup.exe' | Select-Object -First 1

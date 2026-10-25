@@ -289,7 +289,7 @@ fn fewer_than_five_pairs_cannot_apply() {
 }
 #[test]
 fn noisy_small_gain_is_not_confirmed() {
-    let pairs: (Vec<Pair>) = (0..5)
+    let pairs: Vec<Pair> = (0..5)
         .map(|i| Pair {
             baseline: sample(10.0),
             candidate: sample([9.0, 11.0, 9.8, 10.2, 9.9][i]),
@@ -409,4 +409,36 @@ fn steam_manifest_cannot_escape_install_root() {
 #[test]
 fn relative_mutation_paths_are_rejected() {
     assert!(config::safe_file(Path::new("relative/cs2_video.txt")).is_err());
+}
+
+#[cfg(windows)]
+#[test]
+fn canonical_local_windows_paths_roundtrip_without_allowing_network_or_devices() {
+    let temp = TempDir::new().unwrap();
+    let path = temp.path().join("profile.txt");
+    fs::write(&path, b"local").unwrap();
+    let canonical = config::safe_file(&path).unwrap();
+    assert_eq!(config::safe_file(&canonical).unwrap(), canonical);
+    for remote in [
+        r"\\server\share\file.txt",
+        r"\\?\UNC\server\share\file.txt",
+        r"\\.\PhysicalDrive0",
+    ] {
+        assert_eq!(
+            config::safe_file(Path::new(remote)).unwrap_err(),
+            "LOCAL_PATH_REQUIRED"
+        );
+    }
+}
+
+#[test]
+fn oversized_input_is_refused_before_analysis_or_recovery() {
+    let temp = TempDir::new().unwrap();
+    let path = temp.path().join("large.csv");
+    fs::write(&path, vec![0u8; 33]).unwrap();
+    assert_eq!(
+        config::read_limited(&path, 32, "MISSING", "TOO_LARGE").unwrap_err(),
+        "TOO_LARGE"
+    );
+    assert_eq!(fs::metadata(&path).unwrap().len(), 33);
 }

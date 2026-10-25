@@ -13,7 +13,7 @@ use std::{
 
 pub const COLLECTOR_SHA: &str = "b2a706bc6ad475749e3b7e3409263aa1e6906d45bdcf993f6dbc0f660188f1af";
 pub fn collector_valid(path: &Path) -> bool {
-    std::fs::read(path)
+    config::read_limited(path, 980320, "COLLECTOR_MISSING", "COLLECTOR_INVALID")
         .map(|raw| raw.len() == 980320 && sha256(&raw) == COLLECTOR_SHA)
         .unwrap_or(false)
 }
@@ -388,7 +388,12 @@ impl Experiment<'_> {
                 }
                 std::thread::sleep(Duration::from_millis(100));
             }
-            let raw = std::fs::read(&csv).map_err(|_| "CAPTURE_FILE_MISSING")?;
+            let raw = config::read_limited(
+                &csv,
+                64 * 1024 * 1024,
+                "CAPTURE_FILE_MISSING",
+                "CAPTURE_TOO_LARGE",
+            )?;
             let mut metrics = metrics::parse_csv(&raw, Some(child.0.id()))?;
             if metrics.seconds < (self.request.duration_secs as f64 * 0.75)
                 || metrics.seconds > self.request.duration_secs as f64 * 1.3

@@ -18,6 +18,10 @@ Donanımını otomatik tanıyan, CS2 kare sürelerini analiz eden ve ayarları g
 
 ## Kullanım
 
+![Sentetik örnek verilerle Türkçe FrameLab arayüzü](docs/assets/interface-synthetic-tr.png)
+
+*Arayüz önizlemesi; sayılar sentetiktir ve gerçek CS2 performansını göstermez.*
+
 [Sürümlerden](https://github.com/nexora-studio-tr/nexora-framelab/releases) Windows kurulum paketini veya taşınabilir ZIP'i indir; SHA-256 dosyasıyla doğrula. Windows 11 x64 ve mevcut WebView2 gerekir. Son kullanıcı için Python/Rust veya ücretli API gerekmez.
 
 1. Sistemi tara; gerekirse CS2 ayar profilini seç.

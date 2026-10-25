@@ -4,6 +4,7 @@ target/
 artifacts/
 .framelab/
 tools/presentmon/*.exe
+tools/notices/
 *.etl
 *.dem
 *.db*

@@ -19,6 +19,7 @@ if (!valid(bytes)) {
 const response = await fetch(lock.licenseUrl, { signal: AbortSignal.timeout(30000) });
 if (!response.ok) throw Error('License download failed');
 const license = await response.text();
-if (!license.includes('Permission is hereby granted')) throw Error('Unexpected license');
+if (createHash('sha256').update(license).digest('hex') !== lock.licenseSha256)
+  throw Error('License integrity mismatch');
 await writeFile(new URL('LICENSE.txt', dir), license);
 console.log(`PresentMon ${lock.version}: SHA-256 verified; license retained.`);
