@@ -6,7 +6,7 @@ A local Windows application that discovers your hardware, analyzes CS2 frame tim
 
 [![CI](https://github.com/nexora-studio-tr/nexora-framelab/actions/workflows/ci.yml/badge.svg)](https://github.com/nexora-studio-tr/nexora-framelab/actions/workflows/ci.yml) · [Türkçe](README.tr.md) · [Setup](docs/SETUP.md) · [Architecture](docs/ARCHITECTURE.md) · [Validation](docs/VALIDATION.md)
 
-**[Download 0.1.0-alpha.1 for Windows](https://github.com/nexora-studio-tr/nexora-framelab/releases/tag/v0.1.0-alpha.1)** — installer, portable ZIP, source, checksums and executed validation.
+**[Download 0.1.0-alpha.2 for Windows](https://github.com/nexora-studio-tr/nexora-framelab/releases/tag/v0.1.0-alpha.2)** — installer, portable ZIP, source, checksums and executed validation.
 
 **Experimental alpha. Live CS2 testing was explicitly omitted at the operator's request. No real FPS increase or VAC/FACEIT compatibility is claimed.** The write adapter currently recognizes only `video.cfg` **Version 16** with supported fields; other versions remain read-only. Imported captures and examples cannot apply settings.
 
@@ -14,6 +14,7 @@ A local Windows application that discovers your hardware, analyzes CS2 frame tim
 
 - Discovers CPU, DXGI GPU adapters, dedicated/shared VRAM, RAM, display and Steam/CS2 installations. Missing telemetry stays unavailable.
 - Reads PresentMon CSV, keeps processes/swapchains separate and reports presented FPS, 1% low, p95/p99 frame time and stutters. Displayed FPS is separate when available.
+- Compares two imported captures with explicit metric, duration and quality checks. Shows observed differences only; incompatible captures withhold deltas. [How comparison works](docs/COMPARISON.md).
 - Tests at most two allowlisted graphics candidates, then independently confirms the best candidate. Five paired runs per comparison, alternating A/B order; no frame-level pseudoreplication.
 - Journals before writing, recovers interrupted changes, preserves unrelated edits and refuses conflicting changes. Stop and restore are part of the main interface.
 - Uses a bilingual, keyboard-accessible interface. The browser demo uses synthetic data and cannot control your computer.

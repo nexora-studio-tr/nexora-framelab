@@ -41,7 +41,8 @@ pub fn summarize(frames: &[f64], gpu: &[f64], displayed: &[f64], hash: String) -
         None
     };
     let displayed_fps = if !displayed.is_empty() {
-        Some(1000.0 / mean(displayed))
+        let fps = 1000.0 / mean(displayed);
+        (fps.is_finite() && fps > 0.0).then_some(fps)
     } else {
         None
     };
@@ -68,6 +69,16 @@ pub fn summarize(frames: &[f64], gpu: &[f64], displayed: &[f64], hash: String) -
 }
 
 pub fn parse_csv(raw: &[u8], expected_pid: Option<u32>) -> Result<Metrics> {
+    parse_capture(raw, expected_pid).map(|capture| capture.metrics)
+}
+
+pub struct ParsedCapture {
+    pub metrics: Metrics,
+    pub frame_metric: String,
+    pub displayed_complete: bool,
+}
+
+pub fn parse_capture(raw: &[u8], expected_pid: Option<u32>) -> Result<ParsedCapture> {
     if raw.len() > 64 * 1024 * 1024 {
         return Err("CAPTURE_TOO_LARGE".into());
     }
@@ -79,6 +90,13 @@ pub fn parse_csv(raw: &[u8], expected_pid: Option<u32>) -> Result<Metrics> {
     let headers = reader.headers().map_err(|_| "CSV_INVALID")?.clone();
     if headers.len() > 128 {
         return Err("CSV_INVALID".into());
+    }
+    let mut unique = std::collections::HashSet::new();
+    if headers
+        .iter()
+        .any(|h| !unique.insert(h.to_ascii_lowercase()))
+    {
+        return Err("CSV_SCHEMA_AMBIGUOUS".into());
     }
     let column = |names: &[&str]| {
         headers
@@ -172,7 +190,11 @@ pub fn parse_csv(raw: &[u8], expected_pid: Option<u32>) -> Result<Metrics> {
     if frames.len() != total {
         result.warnings.push("SECONDARY_SWAPCHAIN_EXCLUDED".into());
     }
-    Ok(result)
+    Ok(ParsedCapture {
+        metrics: result,
+        frame_metric: headers[frame].to_ascii_lowercase(),
+        displayed_complete: displayed.len() == durations.len(),
+    })
 }
 
 pub fn decide(pairs: &[Pair]) -> Result<Decision> {
@@ -301,6 +323,7 @@ pub fn example(hardware: Hardware) -> Report {
         }],
         holdout: None,
         baseline,
+        comparison: None,
         transaction_id: None,
         notes: vec!["NOT_A_REAL_CS2_BENCHMARK".into()],
     }

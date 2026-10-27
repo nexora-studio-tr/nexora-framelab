@@ -113,6 +113,35 @@ pub struct Pair {
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct ComparisonCheck {
+    pub code: String,
+    pub passed: bool,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ObservedDeltas {
+    pub fps_pct: f64,
+    pub low_one_pct: f64,
+    pub p95_ms_pct: f64,
+    pub p99_ms_pct: f64,
+    pub stutters_per_minute: f64,
+    pub displayed_fps_pct: Option<f64>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CaptureComparison {
+    pub schema_version: u32,
+    pub baseline: Metrics,
+    pub candidate: Metrics,
+    pub baseline_metric: String,
+    pub candidate_metric: String,
+    pub comparable: bool,
+    pub checks: Vec<ComparisonCheck>,
+    pub deltas: Option<ObservedDeltas>,
+    pub notes: Vec<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Decision {
     pub accepted: bool,
     pub reason: String,
@@ -144,6 +173,8 @@ pub struct Report {
     pub trials: Vec<Trial>,
     pub holdout: Option<Trial>,
     pub baseline: Option<Metrics>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comparison: Option<CaptureComparison>,
     pub transaction_id: Option<String>,
     pub notes: Vec<String>,
 }

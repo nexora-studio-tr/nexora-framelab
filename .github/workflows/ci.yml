@@ -1,5 +1,9 @@
 name: Verify and build FrameLab
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -69,6 +73,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           & .\target\release\framelab-cli.exe analyze fixtures\synthetic-baseline.csv | Set-Content artifacts\native\synthetic-analysis.json -Encoding utf8
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $comparison=& .\target\release\framelab-cli.exe compare fixtures\synthetic-baseline.csv fixtures\synthetic-candidate.csv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $comparison | Set-Content artifacts\native\synthetic-comparison.json -Encoding utf8
+          $parsed=$comparison | ConvertFrom-Json
+          if (-not $parsed.comparable -or $parsed.deltas.fpsPct -le 0) { throw 'Comparison CLI failed' }
+          $blocked=& .\target\release\framelab-cli.exe compare fixtures\synthetic-baseline.csv fixtures\synthetic-baseline.csv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $parsed=$blocked | ConvertFrom-Json
+          if ($parsed.comparable -or $null -ne $parsed.deltas) { throw 'Duplicate capture was not blocked' }
       - run: python scripts/package-source.py
       - run: .\scripts\package-windows.ps1
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9

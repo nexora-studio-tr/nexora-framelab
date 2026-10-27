@@ -6,7 +6,7 @@ Donanımını otomatik tanıyan, CS2 kare sürelerini analiz eden ve ayarları g
 
 [English](README.md) · [Kurulum](docs/SETUP.md#türkçe) · [Mimari](docs/ARCHITECTURE.md) · [Doğrulama](docs/VALIDATION.md)
 
-**[Windows için 0.1.0-alpha.1 indir](https://github.com/nexora-studio-tr/nexora-framelab/releases/tag/v0.1.0-alpha.1)** — kurulum, taşınabilir ZIP, kaynak kod, SHA-256 ve test sonuçları.
+**[Windows için 0.1.0-alpha.2 indir](https://github.com/nexora-studio-tr/nexora-framelab/releases/tag/v0.1.0-alpha.2)** — kurulum, taşınabilir ZIP, kaynak kod, SHA-256 ve test sonuçları.
 
 **Deneysel alfa:** Canlı CS2 testi kullanıcı isteğiyle yapılmadı. Gerçek FPS artışı veya VAC/FACEIT uyumluluğu iddia edilmiyor. Ayar yazma adaptörü yalnızca desteklenen alanları içeren `video.cfg` **Version 16** için etkin; başka sürümler salt okunur. CSV içe aktarma ve örnek sonuçlar ayar değiştiremez.
 
@@ -14,6 +14,7 @@ Donanımını otomatik tanıyan, CS2 kare sürelerini analiz eden ve ayarları g
 
 - CPU, GPU, ayrılmış/paylaşılan VRAM, RAM, ekran ve Steam/CS2 kurulumunu bulur. Eksik sensör bilgisi uydurulmaz.
 - PresentMon CSV kayıtlarında FPS, %1 düşük FPS, p95/p99 kare süresi ve takılmayı hesaplar. Farklı süreçlerin ve swapchain'lerin ölçümleri birbirine karıştırılmaz.
+- İki CSV kaydını metrik türü, süre ve kalite kontrolleriyle karşılaştırır. Uyumsuz kayıtlarda yüzde farkını göstermez; gözlenen farkı performans kanıtı saymaz. [Karşılaştırma kılavuzu](docs/COMPARISON.md#türkçe).
 - Uygun grafik ayarlarından en fazla iki adayı karşılaştırır. Her karşılaştırmada beş eşlenik koşu, ardından seçilen aday için bağımsız doğrulama vardır.
 - Değiştirmeden önce yedekler. İptal/hata sonrası geri alır; sonradan değişmiş bir alanı körlemesine ezmez.
 - Türkçe/İngilizce arayüz, klavyeyle kullanım, yerel raporlar ve sentetik arayüz demosu sunar.

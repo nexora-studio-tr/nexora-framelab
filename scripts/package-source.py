@@ -10,6 +10,7 @@ paths=[ROOT/name for name in ROOT_FILES]
 for folder in DIRS:
     for path in (ROOT/folder).rglob('*'):
         if path.is_relative_to(ROOT/'tools/notices'):continue
+        if path.is_relative_to(ROOT/'src-tauri/gen'):continue
         if any(p in ('target','node_modules','artifacts','.git','__pycache__') for p in path.relative_to(ROOT).parts):continue
         if path.suffix=='.exe':continue
         if path.is_file():paths.append(path)
@@ -21,6 +22,7 @@ for path in sorted(set(paths)):
     if path.suffix=='.csv':assert name in ('fixtures/synthetic-baseline.csv','fixtures/synthetic-candidate.csv')
     data=path.read_bytes()
     if path.suffix not in ('.png','.ico'):
+        data=data.replace(b'\r\n',b'\n')
         text=data.decode('utf8')
         assert not any(pattern.search(text) for pattern in SECRET),'Possible secret: '+name
     files[name]=data
@@ -28,10 +30,13 @@ assert len(files)<500 and sum(map(len,files.values()))<12*1024*1024
 assert {'Cargo.lock','package-lock.json','tools/presentmon.lock.json','tools/presentmon/LICENSE.txt','src-tauri/icons/icon.ico'}.issubset(files)
 out=ROOT/'artifacts/release';out.mkdir(parents=True,exist_ok=True)
 manifest={name:hashlib.sha256(data).hexdigest() for name,data in files.items()}
-archive=out/'nexora-framelab-0.1.0-alpha.1-source.zip'
+version=json.loads((ROOT/'package.json').read_text(encoding='utf8'))['version']
+assert re.fullmatch(r'\d+\.\d+\.\d+-alpha\.\d+',version)
+assert json.loads((ROOT/'src-tauri/tauri.conf.json').read_text(encoding='utf8'))['version']==version
+archive=out/f'nexora-framelab-{version}-source.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as package:
     for name,data in {**files,'SOURCE_MANIFEST.json':(json.dumps(manifest,indent=2)+'\n').encode()}.items():
-        info=zipfile.ZipInfo('nexora-framelab/'+name,(2026,10,25,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o100644<<16;package.writestr(info,data)
+        info=zipfile.ZipInfo('nexora-framelab/'+name,(2026,10,27,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o100644<<16;package.writestr(info,data)
 sha=hashlib.sha256(archive.read_bytes()).hexdigest()
 (out/'SOURCE-SHA256SUMS.txt').write_text(sha+'  '+archive.name+'\n',encoding='ascii')
 print(json.dumps({'files':len(files),'bytes':archive.stat().st_size,'sha256':sha}))

@@ -57,6 +57,38 @@ async fn import_capture(
     .map_err(|_| "DIALOG_FAILED")?
 }
 #[tauri::command]
+async fn compare_captures(
+    app: tauri::AppHandle,
+    engine: tauri::State<'_, Backend>,
+) -> Result<Option<Report>> {
+    let engine = engine.inner().clone();
+    tauri::async_runtime::spawn_blocking(move || {
+        let Some(baseline) = app
+            .dialog()
+            .file()
+            .set_title("Baseline capture / Başlangıç kaydı")
+            .add_filter("PresentMon CSV", &["csv"])
+            .blocking_pick_file()
+        else {
+            return Ok(None);
+        };
+        let Some(candidate) = app
+            .dialog()
+            .file()
+            .set_title("Candidate capture / Karşılaştırma kaydı")
+            .add_filter("PresentMon CSV", &["csv"])
+            .blocking_pick_file()
+        else {
+            return Ok(None);
+        };
+        let a = baseline.into_path().map_err(|_| "CSV_INVALID")?;
+        let b = candidate.into_path().map_err(|_| "CSV_INVALID")?;
+        engine.compare(&a, &b).map(Some)
+    })
+    .await
+    .map_err(|_| "DIALOG_FAILED")?
+}
+#[tauri::command]
 async fn start_experiment(
     engine: tauri::State<'_, Backend>,
     request: StartRequest,
@@ -121,6 +153,7 @@ fn main() {
             refresh_system,
             choose_replay,
             import_capture,
+            compare_captures,
             start_experiment,
             cancel_experiment,
             restore_profile,

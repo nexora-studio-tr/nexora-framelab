@@ -19,9 +19,15 @@ fn main() {
             .and_then(|m| serde_json::to_value(m).map_err(|_| "REPORT_INVALID".into())),
             None => Err("CSV_PATH_REQUIRED".into()),
         },
+        Some("compare") => match (args.get(2), args.get(3)) {
+            (Some(a), Some(b)) => framelab_core::comparison::compare_files(
+                std::path::Path::new(a), std::path::Path::new(b),
+            ).and_then(|report| serde_json::to_value(report).map_err(|_| "REPORT_INVALID".into())),
+            _ => Err("TWO_CSV_PATHS_REQUIRED".into()),
+        },
         Some("example") => serde_json::to_value(metrics::example(Hardware::default()))
             .map_err(|_| "REPORT_INVALID".into()),
-        _ => Err("Usage: framelab-cli diagnose | analyze <PresentMon.csv> | example".into()),
+        _ => Err("Usage: framelab-cli diagnose | analyze <PresentMon.csv> | compare <baseline.csv> <candidate.csv> | example".into()),
     };
     match result {
         Ok(value) => println!(
