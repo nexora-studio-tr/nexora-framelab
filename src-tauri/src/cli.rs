@@ -20,9 +20,12 @@ fn main() {
             None => Err("CSV_PATH_REQUIRED".into()),
         },
         Some("compare") => match (args.get(2), args.get(3)) {
-            (Some(a), Some(b)) => framelab_core::comparison::compare_files(
-                std::path::Path::new(a), std::path::Path::new(b),
-            ).and_then(|report| serde_json::to_value(report).map_err(|_| "REPORT_INVALID".into())),
+            (Some(a), Some(b)) => std::env::current_dir()
+                .map_err(|_| "LOCAL_PATH_REQUIRED".to_string())
+                .and_then(|cwd| framelab_core::comparison::compare_files(
+                    &cwd.join(a), &cwd.join(b),
+                ))
+                .and_then(|report| serde_json::to_value(report).map_err(|_| "REPORT_INVALID".into())),
             _ => Err("TWO_CSV_PATHS_REQUIRED".into()),
         },
         Some("example") => serde_json::to_value(metrics::example(Hardware::default()))
