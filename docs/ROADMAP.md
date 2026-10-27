@@ -4,6 +4,8 @@
 
 Hardware discovery; read-only CSV analysis; allowlisted Version 16 config adapter; paired trials plus holdout; durable recovery; TR/EN UI; synthetic demo; source/Windows packages. The user explicitly removed live CS2 acceptance from this release, so the software is labelled experimental rather than production validated.
 
+Alpha.2 adds observational comparison of two imported captures, explicit quality gates, source fingerprints and local JSON export. The comparison never creates an apply decision. [Semantics](COMPARISON.md).
+
 ## Before claiming verified live tuning
 
 1. Validate the current CS2 config version and actual field meanings on a dedicated local setup.

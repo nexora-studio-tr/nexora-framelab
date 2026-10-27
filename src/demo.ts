@@ -86,3 +86,44 @@ export const demoSnapshot: Snapshot = {
   replaySelected: false,
   liveValidation: 'NOT_RUN_AT_OPERATOR_REQUEST',
 };
+
+const comparisonBaseline = { ...sample(1), sourceHash: 'synthetic-comparison-a' };
+const comparisonCandidate = { ...sample(0.9), sourceHash: 'synthetic-comparison-b' };
+export const demoComparisonReport: Report = {
+  ...demoReport,
+  id: 'synthetic-comparison',
+  source: 'SYNTHETIC_COMPARISON',
+  trials: [],
+  holdout: null,
+  map: null,
+  baseline: comparisonBaseline,
+  comparison: {
+    schemaVersion: 1,
+    baseline: comparisonBaseline,
+    candidate: comparisonCandidate,
+    baselineMetric: 'frametime',
+    candidateMetric: 'frametime',
+    comparable: true,
+    checks: [
+      'SAME_FRAME_METRIC',
+      'DISTINCT_CAPTURES',
+      'ENOUGH_FRAMES',
+      'SIMILAR_DURATION',
+      'NO_CAPTURE_QUALITY_WARNING',
+    ].map((code) => ({ code, passed: true })),
+    deltas: {
+      fpsPct: 11.111111,
+      lowOnePct: 11.111111,
+      p95MsPct: -10,
+      p99MsPct: -10,
+      stuttersPerMinute: 0,
+      displayedFpsPct: null,
+    },
+    notes: [
+      'SCENE_HARDWARE_SETTINGS_UNVERIFIED',
+      'SINGLE_PAIR_NO_CAUSAL_OR_CONFIDENCE_CLAIM',
+      'IMPORT_CANNOT_APPLY_SETTINGS',
+    ],
+  },
+  notes: ['NOT_A_REAL_CS2_BENCHMARK'],
+};

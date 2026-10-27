@@ -36,6 +36,7 @@ import {
   type Snapshot,
 } from './types';
 import { text, explain, phase } from './i18n';
+import { ComparisonEvidence } from './ComparisonEvidence';
 import './style.css';
 
 function Choice({
@@ -114,7 +115,7 @@ function Chart({ report, lang }: { report: Report | null; lang: Lang }) {
   const t = text[lang],
     trial = report?.holdout ?? report?.trials[0],
     before = report?.baseline?.series ?? [],
-    after = trial?.pairs.at(-1)?.candidate.series ?? [];
+    after = report?.comparison?.candidate.series ?? trial?.pairs.at(-1)?.candidate.series ?? [];
   const max = Math.max(16, ...before, ...after) * 1.15;
   const points = (values: number[]) =>
     values
@@ -222,12 +223,12 @@ function App() {
   const hw = state?.hardware,
     trial = report?.holdout ?? report?.trials[0],
     before = report?.baseline,
-    after = trial?.pairs.at(-1)?.candidate,
+    after = report?.comparison?.candidate ?? trial?.pairs.at(-1)?.candidate,
     decision = trial?.decision;
   const estimate = estimateMinutes(2, 5, Number(duration));
   const source = report?.synthetic
     ? t.synthetic
-    : report?.source === 'IMPORTED_CSV_UNVERIFIED_SCENE'
+    : report?.source.startsWith('IMPORTED_CSV_')
       ? t.imported
       : t.actual;
   const reportLabel = (status: string) =>
@@ -247,6 +248,14 @@ function App() {
   const importCapture = () =>
     perform(async () => {
       const next = await api.importCapture();
+      if (next) {
+        setReport(next);
+        setTab('results');
+      }
+    });
+  const compareCaptures = () =>
+    perform(async () => {
+      const next = await api.compareCaptures();
       if (next) {
         setReport(next);
         setTab('results');
@@ -314,12 +323,15 @@ function App() {
             {report?.synthetic ? t.dataset : report ? t.report : t.local}
           </span>
           <h2>{t.chart}</h2>
-          <p>{t.chartSub}</p>
+          <p>{report?.comparison ? t.comparisonChart : t.chartSub}</p>
         </div>
         <span className={`status-badge ${report?.synthetic ? 'amber' : ''}`}>
           {report?.synthetic ? t.synthetic : report ? reportLabel(report.status) : t.readOnly}
         </span>
       </div>
+      {report?.comparison && (
+        <ComparisonEvidence value={report.comparison} lang={lang} synthetic={report.synthetic} />
+      )}
       {before ? (
         <>
           <div className="metrics">
@@ -327,7 +339,14 @@ function App() {
               { name: t.fps, before: before.fps, after: after?.fps, unit: '' },
               { name: t.low, before: before.lowOne, after: after?.lowOne, unit: '' },
               { name: t.tail, before: before.p99Ms, after: after?.p99Ms, unit: 'ms' },
-              { name: t.stutters, before: before.stutters, after: after?.stutters, unit: '' },
+              report?.comparison
+                ? {
+                    name: t.rate,
+                    before: (before.stutters * 60) / before.seconds,
+                    after: after ? (after.stutters * 60) / after.seconds : undefined,
+                    unit: '',
+                  }
+                : { name: t.stutters, before: before.stutters, after: after?.stutters, unit: '' },
             ].map((m, i) => (
               <article key={m.name}>
                 <span className="eyebrow">{m.name}</span>
@@ -524,7 +543,7 @@ function App() {
             {t.help}
           </button>
           <div className="version">
-            <span>v0.1.0-alpha.1</span>
+            <span>v0.1.0-alpha.2</span>
             <span>{t.alpha}</span>
           </div>
         </div>
@@ -667,14 +686,24 @@ function App() {
                 <span className="eyebrow">{t.evidence}</span>
                 <h2>{t.history}</h2>
               </div>
-              <button
-                className="button secondary"
-                disabled={!desktop || working || busy}
-                onClick={importCapture}
-              >
-                <FolderOpen size={15} />
-                {t.import}
-              </button>
+              <div className="report-actions">
+                <button
+                  className="button secondary"
+                  disabled={working || busy}
+                  onClick={compareCaptures}
+                >
+                  <Activity size={15} />
+                  {desktop ? t.compare : t.compareExample}
+                </button>
+                <button
+                  className="button secondary"
+                  disabled={!desktop || working || busy}
+                  onClick={importCapture}
+                >
+                  <FolderOpen size={15} />
+                  {t.import}
+                </button>
+              </div>
             </div>
             <div className="history">
               {state?.reports.length ? (
@@ -691,7 +720,7 @@ function App() {
                       <strong>{reportLabel(r.status)}</strong>
                       <span>
                         {new Date(r.createdAt).toLocaleString(lang)} ·{' '}
-                        {r.source === 'IMPORTED_CSV_UNVERIFIED_SCENE' ? t.imported : t.actual}
+                        {r.source.startsWith('IMPORTED_CSV_') ? t.imported : t.actual}
                       </span>
                     </div>
                     <span>{metric(r.baseline?.fps)} FPS</span>

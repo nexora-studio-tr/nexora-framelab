@@ -74,6 +74,24 @@ export interface Trial {
   pairs: Pair[];
   decision: Decision;
 }
+export interface CaptureComparison {
+  schemaVersion: number;
+  baseline: Metrics;
+  candidate: Metrics;
+  baselineMetric: string;
+  candidateMetric: string;
+  comparable: boolean;
+  checks: { code: string; passed: boolean }[];
+  deltas: {
+    fpsPct: number;
+    lowOnePct: number;
+    p95MsPct: number;
+    p99MsPct: number;
+    stuttersPerMinute: number;
+    displayedFpsPct: number | null;
+  } | null;
+  notes: string[];
+}
 export interface Report {
   id: string;
   createdAt: number;
@@ -87,6 +105,7 @@ export interface Report {
   trials: Trial[];
   holdout: Trial | null;
   baseline: Metrics | null;
+  comparison?: CaptureComparison | null;
   transactionId: string | null;
   notes: string[];
 }

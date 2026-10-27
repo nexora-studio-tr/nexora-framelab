@@ -14,6 +14,82 @@
   --accent: #a24e22;
   --green: #286052;
 }
+.comparison-evidence {
+  border-block: 1px solid var(--line);
+  padding: 24px;
+  background: #f8f8f3;
+}
+.comparison-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.comparison-heading h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.comparison-evidence p,
+.comparison-evidence small {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.comparison-deltas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  gap: 16px;
+  margin: 22px 0 12px;
+}
+.comparison-deltas dt {
+  font-size: 11px;
+  color: var(--muted);
+}
+.comparison-deltas dd {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.comparison-checks {
+  list-style: none;
+  margin: 22px 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+}
+.comparison-checks li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+}
+.comparison-checks svg {
+  color: var(--green);
+  flex-shrink: 0;
+}
+.comparison-checks li[data-passed='false'] svg {
+  color: var(--accent);
+}
+.comparison-checks strong {
+  margin-left: auto;
+  font-size: 11px;
+}
+.comparison-evidence summary {
+  cursor: pointer;
+  font-size: 12px;
+}
+.comparison-source {
+  display: grid;
+  gap: 7px;
+  margin-top: 16px;
+  min-width: 0;
+  font-size: 11px;
+}
+.comparison-source code {
+  overflow-wrap: anywhere;
+  font-size: 10px;
+}
 * {
   box-sizing: border-box;
 }

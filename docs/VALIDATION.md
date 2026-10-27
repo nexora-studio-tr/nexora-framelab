@@ -1,8 +1,20 @@
 # Validation
 
-This document separates implemented behavior from executed validation. Release binaries and the source package were built from commit `c88ae54e0ebdec3f90429d068328887444414a91`.
+This document separates implemented behavior from executed validation. Exact source commit, CI result and download integrity for the current release are recorded in its attached `RELEASE-VALIDATION.json` and checksums.
+
+## Alpha.2 verification
+
+Local Windows frontend verification passed: ten unit tests, twelve browser checks, strict TypeScript, production build, Prettier and rustfmt. Browser checks include both observational and blocked comparisons, source details, Turkish mobile layout and automated WCAG A/AA rules. A separate browser context simulates native IPC for the blocked case; this is not a native file-picker test.
+
+The local standalone Rust toolchain lacks its standard library, so local compilation was not reported as successful. Windows/Linux Rust tests, Clippy, native CLI smoke checks, NSIS and portable packaging are release gates executed through GitHub Actions. Their exact-commit results must pass before alpha.2 is published; use the attached validation record for the final outcome.
+
+Thirteen new Rust comparison tests cover metric mismatch, identical/BOM inputs, unequal windows and the shipped decimal fixtures at the 10% boundary, thin tail samples, loading/secondary streams, normalized stutter rates, complete displayed timing, ambiguous headers/processes, legacy report loading, safe persistence/export and failed second imports. A comparison contains no mutation transaction or statistical acceptance decision. The source ZIP excludes generated Tauri ACL schemas, which are regenerated during builds.
+
+Live CS2 testing remains omitted. No real FPS gain, game-build compatibility or VAC/FACEIT result is claimed. Alpha.1 native-window and hardware results below are historical evidence, not newly executed alpha.2 checks.
 
 ## Executed checks — 0.1.0-alpha.1
+
+The alpha.1 binaries and source package used commit `c88ae54e0ebdec3f90429d068328887444414a91`.
 
 [GitHub Actions run 40222522741](https://github.com/nexora-studio-tr/nexora-framelab/actions/runs/40222522741) completed successfully on 25 October 2026:
 

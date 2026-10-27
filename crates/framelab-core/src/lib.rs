@@ -1,3 +1,4 @@
+pub mod comparison;
 pub mod config;
 pub mod gsi;
 pub mod kv;
@@ -182,6 +183,7 @@ impl Engine {
             trials: Vec::new(),
             holdout: None,
             baseline: Some(baseline),
+            comparison: None,
             transaction_id: None,
             notes: vec!["IMPORT_CANNOT_APPLY_SETTINGS".into()],
         };
@@ -196,6 +198,29 @@ impl Engine {
                 .hardware
                 .clone(),
         ))
+    }
+    pub fn compare(&self, baseline: &Path, candidate: &Path) -> Result<Report> {
+        let comparison = comparison::compare_files(baseline, candidate)?;
+        let report = Report {
+            id: uuid::Uuid::new_v4().to_string(),
+            created_at: now_ms(),
+            synthetic: false,
+            source: "IMPORTED_CSV_COMPARISON".into(),
+            status: "analysis".into(),
+            // The importing machine is not evidence of the capture's hardware.
+            hardware: Hardware::default(),
+            build_id: None,
+            replay_hash: None,
+            map: None,
+            trials: Vec::new(),
+            holdout: None,
+            baseline: Some(comparison.baseline.clone()),
+            notes: comparison.notes.clone(),
+            comparison: Some(comparison),
+            transaction_id: None,
+        };
+        self.store.save_report(&report)?;
+        Ok(report)
     }
     pub fn start(self: &Arc<Self>, request: StartRequest) -> Result<String> {
         let _operation = self
@@ -314,6 +339,7 @@ impl Engine {
                     trials: Vec::new(),
                     holdout: None,
                     baseline: None,
+                    comparison: None,
                     transaction_id: None,
                     notes: vec![message.clone()],
                 });

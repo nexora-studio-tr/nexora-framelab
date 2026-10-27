@@ -175,6 +175,7 @@ impl Experiment<'_> {
             trials,
             holdout,
             baseline: None,
+            comparison: None,
             transaction_id: None,
             notes: vec![
                 "REPLAY_RESULTS_DO_NOT_PREDICT_ALL_LIVE_MATCHES".into(),

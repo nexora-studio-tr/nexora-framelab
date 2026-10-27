@@ -1,5 +1,5 @@
 import { invoke, isTauri } from '@tauri-apps/api/core';
-import { demoReport, demoSnapshot } from './demo';
+import { demoReport, demoSnapshot, demoComparisonReport } from './demo';
 import type { Mode, Report, Snapshot } from './types';
 export const desktop = isTauri();
 export const api = {
@@ -11,6 +11,10 @@ export const api = {
     desktop ? invoke<Report>('load_example') : Promise.resolve(structuredClone(demoReport)),
   chooseReplay: () => invoke<boolean>('choose_replay'),
   importCapture: () => invoke<Report | null>('import_capture'),
+  compareCaptures: () =>
+    desktop
+      ? invoke<Report | null>('compare_captures')
+      : Promise.resolve(structuredClone(demoComparisonReport)),
   start: (profileId: string, mode: Mode, durationSecs: number) =>
     invoke<string>('start_experiment', {
       request: { profileId, mode, durationSecs, pairs: 5, consent: true },
