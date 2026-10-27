@@ -5,7 +5,7 @@
 - Compare two imported PresentMon captures through the native panel or `framelab-cli compare` without starting CS2 or changing settings.
 - Withhold arithmetic deltas when metric semantics, duration, frame count, source distinctness or capture quality do not match. Normalize stutters per minute and keep incomplete displayed timing unavailable.
 - Show bilingual quality checks, source fingerprints, normalized traces and explicit observational limits. Store/export comparison reports without paths or mutation transactions; older reports remain readable.
-- Add twelve Rust comparison tests, browser coverage for compatible and blocked comparisons, mobile accessibility checks and native CLI CI checks. Derive package filenames from the current version.
+- Add thirteen Rust comparison tests, including the shipped decimal fixtures at the duration boundary, browser coverage for compatible and blocked comparisons, mobile accessibility checks and native CLI CI checks. Derive package filenames from the current version.
 
 Live CS2 testing remains omitted; no causal FPS gain or VAC/FACEIT compatibility is claimed.
 

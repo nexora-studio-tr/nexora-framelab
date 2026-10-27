@@ -60,6 +60,17 @@ fn unequal_windows_are_not_reported_as_an_optimization() {
     assert!(c.deltas.is_none());
 }
 #[test]
+fn packaged_decimal_fixtures_pass_the_ten_percent_boundary_without_widening_it() {
+    let a = include_bytes!("../../../fixtures/synthetic-baseline.csv");
+    let b = include_bytes!("../../../fixtures/synthetic-candidate.csv");
+    let c = comparison::compare_csv(a, b).unwrap();
+    assert!(c.comparable, "{:?}", c.checks);
+    assert!(c.deltas.unwrap().fps_pct > 0.0);
+    let outside = comparison::compare_csv(&csv(10.0, 2000), &csv(8.99, 2000)).unwrap();
+    assert!(!check(&outside, "SIMILAR_DURATION"));
+    assert!(outside.deltas.is_none());
+}
+#[test]
 fn thin_tail_samples_are_visible_but_not_compared() {
     let c = comparison::compare_csv(&csv(20.0, 700), &csv(19.0, 700)).unwrap();
     assert!(!check(&c, "ENOUGH_FRAMES"));

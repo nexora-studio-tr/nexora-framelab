@@ -77,7 +77,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $comparison | Set-Content artifacts\native\synthetic-comparison.json -Encoding utf8
           $parsed=$comparison | ConvertFrom-Json
-          if (-not $parsed.comparable -or $parsed.deltas.fpsPct -le 0) { throw 'Comparison CLI failed' }
+          if (-not $parsed.comparable -or $parsed.deltas.fpsPct -le 0) {
+            $parsed.checks | ConvertTo-Json -Compress | Write-Output
+            throw 'Comparison CLI failed'
+          }
           $blocked=& .\target\release\framelab-cli.exe compare fixtures\synthetic-baseline.csv fixtures\synthetic-baseline.csv
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $parsed=$blocked | ConvertFrom-Json

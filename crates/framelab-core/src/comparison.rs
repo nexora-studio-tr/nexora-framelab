@@ -49,7 +49,9 @@ pub fn compare_csv(baseline: &[u8], candidate: &[u8]) -> Result<CaptureCompariso
             "SIMILAR_DURATION",
             (a.metrics.seconds - b.metrics.seconds).abs()
                 / a.metrics.seconds.max(b.metrics.seconds)
-                <= 0.10 + f64::EPSILON,
+                // Up to one million decimal durations are summed; tolerate only
+                // numerical accumulation at the 10% boundary, not a wider window.
+                <= 0.10 + 1e-9,
         ),
         (
             "NO_CAPTURE_QUALITY_WARNING",

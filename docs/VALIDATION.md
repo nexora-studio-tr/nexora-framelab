@@ -8,7 +8,7 @@ Local Windows frontend verification passed: ten unit tests, twelve browser check
 
 The local standalone Rust toolchain lacks its standard library, so local compilation was not reported as successful. Windows/Linux Rust tests, Clippy, native CLI smoke checks, NSIS and portable packaging are release gates executed through GitHub Actions. Their exact-commit results must pass before alpha.2 is published; use the attached validation record for the final outcome.
 
-Twelve new Rust comparison tests cover metric mismatch, identical/BOM inputs, unequal windows, thin tail samples, loading/secondary streams, normalized stutter rates, complete displayed timing, ambiguous headers/processes, legacy report loading, safe persistence/export and failed second imports. A comparison contains no mutation transaction or statistical acceptance decision. The source ZIP excludes generated Tauri ACL schemas, which are regenerated during builds.
+Thirteen new Rust comparison tests cover metric mismatch, identical/BOM inputs, unequal windows and the shipped decimal fixtures at the 10% boundary, thin tail samples, loading/secondary streams, normalized stutter rates, complete displayed timing, ambiguous headers/processes, legacy report loading, safe persistence/export and failed second imports. A comparison contains no mutation transaction or statistical acceptance decision. The source ZIP excludes generated Tauri ACL schemas, which are regenerated during builds.
 
 Live CS2 testing remains omitted. No real FPS gain, game-build compatibility or VAC/FACEIT result is claimed. Alpha.1 native-window and hardware results below are historical evidence, not newly executed alpha.2 checks.
 
